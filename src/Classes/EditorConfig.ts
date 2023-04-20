@@ -20,23 +20,29 @@ export default class EditorConfig {
 
     async generateConfig() {
         const workspaces = getCurrentWorkspaces()
-        let pickItems: vscode.QuickPickItem[] = []
-        if (workspaces) {
-            pickItems = createFolderQuickPickItem(workspaces)
-        }
-        let files: vscode.QuickPickItem[] | undefined = []
+        let workspacePickItems: vscode.QuickPickItem[] = []
 
-        if (pickItems.length > 1) {
-            files = await vscode.window.showQuickPick(pickItems, {
+        if (!workspaces) {
+            vscode.window.showErrorMessage('No open directory')
+            return
+        }
+
+        if (workspaces) {
+            workspacePickItems = createFolderQuickPickItem(workspaces)
+        }
+        let pickedFolders: vscode.QuickPickItem[] | undefined = []
+
+        if (workspacePickItems.length > 1) {
+            pickedFolders = await vscode.window.showQuickPick(workspacePickItems, {
                 canPickMany: true,
-                title: 'Seleccciona el directorio',
+                title: 'Choce the directories',
             })
         } else {
-            files = [pickItems[0]]
+            pickedFolders = [workspacePickItems[0]]
         }
 
-        if (files) {
-            vscode.window.showInformationMessage(files[0].label)
+        if (pickedFolders) {
+            vscode.window.showInformationMessage(pickedFolders[0].label)
         }
     }
 
