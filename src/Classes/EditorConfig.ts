@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from "vscode";
 import { EXTENSION_MENU_PATH } from "../Utils/constants";
-import { METHODS } from "http";
+import {
+    createFolderQuickPickItem,
+    getCurrentWorkspaces,
+} from "../Utils/methods";
 
 export default class EditorConfig {
     GENERATE_CONFIG_BINDER = `generate-config-binder`;
@@ -25,10 +28,38 @@ export default class EditorConfig {
         );
     }
 
-    generateConfig() {
-        vscode.window.showInformationMessage(
-            "HELLO WORLD"
-        );
+    async generateConfig() {
+        const workspaces = getCurrentWorkspaces();
+        let pickItems: vscode.QuickPickItem[] =
+            [];
+        if (workspaces) {
+            pickItems =
+                createFolderQuickPickItem(
+                    workspaces
+                );
+        }
+        let files:
+            | vscode.QuickPickItem[]
+            | undefined = [];
+
+        if (pickItems.length > 1) {
+            files =
+                await vscode.window.showQuickPick(
+                    pickItems,
+                    {
+                        canPickMany: true,
+                        title: "Seleccciona el directorio",
+                    }
+                );
+        } else {
+            files = [pickItems[0]];
+        }
+
+        if (files) {
+            vscode.window.showInformationMessage(
+                files[0].label
+            );
+        }
     }
 
     private registerCommand(
