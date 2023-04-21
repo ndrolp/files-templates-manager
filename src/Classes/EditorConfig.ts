@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode'
 import { EXTENSION_MENU_PATH } from '../Utils/constants'
+import { readdir, readdirSync } from 'fs'
 import { createFolderQuickPickItem, getCurrentWorkspaces } from '../Utils/methods'
+import { error } from 'console'
+import path = require('path')
 
 export default class EditorConfig {
     GENERATE_CONFIG_BINDER = `generate-config-binder`
@@ -21,6 +24,14 @@ export default class EditorConfig {
     async generateConfig() {
         const workspaces = getCurrentWorkspaces()
         let workspacePickItems: vscode.QuickPickItem[] = []
+        const root = path.join(__dirname, '../../Configs')
+        vscode.window.showInformationMessage(root)
+
+        const files = readdirSync(root)
+
+        if (files) {
+            const settings = await vscode.window.showQuickPick(files)
+        }
 
         if (!workspaces) {
             vscode.window.showErrorMessage('No open directory')
@@ -53,5 +64,16 @@ export default class EditorConfig {
         )
 
         return disposable
+    }
+
+    private existingConfigs() {
+        try {
+            const files = readdirSync(path.join(__dirname, '../Configs'))
+            files.forEach(value => {
+                vscode.window.showInformationMessage(value)
+            })
+        } catch (error) {
+            console.error(error)
+        }
     }
 }
