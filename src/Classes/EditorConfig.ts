@@ -5,6 +5,7 @@ import { readdir, readdirSync, copyFileSync } from 'fs'
 import { createFolderQuickPickItem, getCurrentWorkspaces } from '../Utils/methods'
 import { error } from 'console'
 import path = require('path')
+import { AssertionError } from 'assert'
 
 export default class EditorConfig {
     GENERATE_CONFIG_BINDER = `generate-config-binder`
@@ -18,14 +19,10 @@ export default class EditorConfig {
         this.context.subscriptions.push(
             this.registerCommand(this.GENERATE_CONFIG_BINDER, this.generateConfig)
         )
-        vscode.window.showInformationMessage('Methods Binded')
     }
 
     async generateConfig() {
-        vscode.window.showInformationMessage('LOADING')
-
         const configs: string[] = EditorConfig.getConfigs()
-        vscode.window.showWarningMessage(configs[0])
 
         if (configs.length === 0) {
             vscode.window.showErrorMessage('There are no style guidelines')
@@ -62,9 +59,14 @@ export default class EditorConfig {
             return
         }
 
-        pickedFolders.forEach(folder => {
-            EditorConfig.copyFiles(pickedConfig, folder.detail ?? '')
-        })
+        try {
+            pickedFolders.forEach(folder => {
+                EditorConfig.copyFiles(pickedConfig, folder.detail ?? '')
+            })
+        } catch (err: any) {
+            vscode.window.showErrorMessage(err.message)
+            return
+        }
 
         vscode.window.showInformationMessage('Files Created')
     }
@@ -86,6 +88,10 @@ export default class EditorConfig {
     static copyFiles(configuration: string, destination: string) {
         const BASE_FOLDER = path.join(CONFIGS_FOLDER, configuration)
         const folder_content = readdirSync(BASE_FOLDER)
+
+        if (folder_content.length === 0) {
+            throw new Error('No files on the guideline')
+        }
 
         try {
             folder_content.forEach(element => {
