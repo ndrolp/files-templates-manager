@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode'
-import { EXTENSION_MENU_PATH } from '../Utils/constants'
-import { readdir, readdirSync } from 'fs'
+import { CONFIGS_FOLDER, EXTENSION_MENU_PATH } from '../Utils/constants'
+import { readdir, readdirSync, copyFileSync } from 'fs'
 import { createFolderQuickPickItem, getCurrentWorkspaces } from '../Utils/methods'
 import { error } from 'console'
 import path = require('path')
@@ -22,16 +22,22 @@ export default class EditorConfig {
     }
 
     async generateConfig() {
+        vscode.window.showInformationMessage('LOADING')
+
+        const configs: string[] = EditorConfig.getConfigs()
+        vscode.window.showWarningMessage(configs[0])
+
+        if (configs.length === 0) {
+            vscode.window.showErrorMessage('There are no style guidelines')
+            return
+        }
+        const pickedConfig = await vscode.window.showQuickPick(configs)
+        if (!pickedConfig) {
+            return
+        }
+
         const workspaces = getCurrentWorkspaces()
         let workspacePickItems: vscode.QuickPickItem[] = []
-        const root = path.join(__dirname, '../../Configs')
-        vscode.window.showInformationMessage(root)
-
-        const files = readdirSync(root)
-
-        if (files) {
-            const settings = await vscode.window.showQuickPick(files)
-        }
 
         if (!workspaces) {
             vscode.window.showErrorMessage('No open directory')
@@ -46,15 +52,21 @@ export default class EditorConfig {
         if (workspacePickItems.length > 1) {
             pickedFolders = await vscode.window.showQuickPick(workspacePickItems, {
                 canPickMany: true,
-                title: 'Choce the directories',
+                title: 'Chose the directories',
             })
         } else {
             pickedFolders = [workspacePickItems[0]]
         }
 
-        if (pickedFolders) {
-            vscode.window.showInformationMessage(pickedFolders[0].label)
+        if (!pickedFolders) {
+            return
         }
+
+        pickedFolders.forEach(folder => {
+            EditorConfig.copyFiles(pickedConfig, folder.detail ?? '')
+        })
+
+        vscode.window.showInformationMessage('Files Created')
     }
 
     private registerCommand(command: string, method: any): vscode.Disposable {
@@ -66,14 +78,21 @@ export default class EditorConfig {
         return disposable
     }
 
-    private existingConfigs() {
+    static getConfigs(): string[] {
+        const folders = readdirSync(CONFIGS_FOLDER)
+        return folders
+    }
+
+    static copyFiles(configuration: string, destination: string) {
+        const BASE_FOLDER = path.join(CONFIGS_FOLDER, configuration)
+        const folder_content = readdirSync(BASE_FOLDER)
+
         try {
-            const files = readdirSync(path.join(__dirname, '../Configs'))
-            files.forEach(value => {
-                vscode.window.showInformationMessage(value)
+            folder_content.forEach(element => {
+                copyFileSync(path.join(BASE_FOLDER, element), path.join(destination, element))
             })
         } catch (error) {
-            console.error(error)
+            vscode.window.showErrorMessage('Files Could Not Be Created')
         }
     }
 }
