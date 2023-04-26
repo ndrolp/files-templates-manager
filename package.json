@@ -22,6 +22,10 @@
             {
                 "command": "styles-guideline-manager.generate-config-binder",
                 "title": "SGM: Generar archivos de configuración"
+            },
+            {
+                "command": "styles-guideline-manager.import-zip-binder",
+                "title": "SGM: Import Config Zip"
             }
         ]
     },
