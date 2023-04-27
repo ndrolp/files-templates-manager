@@ -1,7 +1,10 @@
 import * as vscode from 'vscode'
-import { EXTENSION_MENU_PATH } from '../Utils/constants'
+import { CONFIGS_FOLDER, EXTENSION_MENU_PATH } from '../Utils/constants'
+import decompress = require('decompress')
+import path = require('path')
+import { existsSync, mkdir, mkdirSync } from 'fs'
 
-class Import {
+export default class Import {
     context: vscode.ExtensionContext
     IMPORT_ZIP_BINDER = `import-zip-binder`
 
@@ -35,6 +38,15 @@ class Import {
         const file = await vscode.window.showOpenDialog(options)
         if (!file) {
             return
+        }
+
+        const filename = 'IMPORTED - ' + file[0].path.split('/')[file[0].path.split('/').length - 1]
+        let folderName = filename.split('.')[0]
+        folderName = path.join(CONFIGS_FOLDER, folderName)
+
+        if (!existsSync(folderName)) {
+            mkdirSync(folderName)
+            decompress(file[0].fsPath, folderName)
         }
     }
 }
