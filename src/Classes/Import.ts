@@ -33,6 +33,9 @@ export default class Import {
             openLabel: 'Select',
             canSelectFiles: true,
             canSelectFolders: false,
+            filters: {
+                ZIP: ['zip'],
+            },
         }
 
         const file = await vscode.window.showOpenDialog(options)
@@ -46,7 +49,12 @@ export default class Import {
 
         if (!existsSync(folderName)) {
             mkdirSync(folderName)
-            decompress(file[0].fsPath, folderName)
+        } else {
+            vscode.window.showErrorMessage('There is already an import with that name')
+            return
         }
+
+        decompress(file[0].fsPath, folderName)
+        vscode.window.showInformationMessage('Files Imported')
     }
 }
