@@ -5,7 +5,19 @@
     "bracketSameLine": false,
     "arrowParens": "avoid",
     "singleQuote": true,
+    "proseWrap": "preserve",
+    "trailingComma": "es5",
+    "requirePragma": false,
     "bracketSpacing": true,
-    "printWidth": 100,
-    "jsxSingleQuote": true
+    "printWidth": 120,
+    "jsxSingleQuote": true,
+    "cursorOffset": -1,
+    "editorconfig": false,
+    "embeddedLanguageFormatting": "auto",
+    "endOfLine": "auto",
+    "filepath": "",
+    "htmlWhitespaceSensitivity": "css",
+    "insertPragma": false,
+    "overrides": [],
+    "singleAttributePerLine": false
 }
