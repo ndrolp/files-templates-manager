@@ -1,7 +1,7 @@
 {
-    "name": "styles-guideline-manager",
-    "displayName": "Styles Guideline Manager",
-    "description": "Maneja las guias de estilos de tus proyectos",
+    "name": "files-templates-manager",
+    "displayName": "Files templates Manager",
+    "description": "Manage your most used files for eazy imports",
     "version": "0.0.1",
     "engines": {
         "vscode": "^1.77.0"
@@ -9,23 +9,17 @@
     "categories": [
         "Other"
     ],
-    "activationEvents": [
-        "onCommand:styles-guideline-manager.helloWorld"
-    ],
+    "activationEvents": [],
     "main": "./out/extension.js",
     "contributes": {
         "commands": [
             {
-                "command": "styles-guideline-manager.helloWorld",
-                "title": "Hello World"
+                "command": "files-templates-manager.generate-config-binder",
+                "title": "FTM: Generate files from template"
             },
             {
-                "command": "styles-guideline-manager.generate-config-binder",
-                "title": "SGM: Generar archivos de configuración"
-            },
-            {
-                "command": "styles-guideline-manager.import-zip-binder",
-                "title": "SGM: Import Config Zip"
+                "command": "files-templates-manager.import-zip-binder",
+                "title": "FTM: Import Config Zip"
             }
         ]
     },
