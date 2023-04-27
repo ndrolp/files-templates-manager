@@ -1,7 +1,7 @@
 # Files Templates Manager
 
 This extension allows you to create templates of files to add to the root of your project.
-You could use this to store your styles guidelines and eazy add them to your new projects
+You could use this to store your styles guidelines and easy add them to your new projects
 
 ## Commands
 
